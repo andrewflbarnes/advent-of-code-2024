@@ -1,6 +1,7 @@
 (ns aoc 
   (:require
-   [d01]))
+   [d01]
+   [d02]))
 
 (defn fname [day suff]
   (let [fsuff (cond (nil? suff) "" :else (str "-" suff))
@@ -12,6 +13,7 @@
 (defn runday [day file]
   (let [dayfunc (case day
                   "1" d01/d01
+                  "2" d02/d02
                   nil)]
     (cond (nil? dayfunc)
           (missing day)

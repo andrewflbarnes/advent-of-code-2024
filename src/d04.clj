@@ -14,6 +14,20 @@
     (:180deg :0.5) (reverse (map reverse mat))
     (:270deg :0.75) (reverse (apply map list mat))))
 
+(defn xmasrng [x]
+  (let [rng (range (- (count x) 2))]
+    (->> rng
+         (map #(map (fn [r] (list % r)) rng))
+         (apply concat)
+         (map (fn [[r c]] (list (take 3 (drop c (nth x r)))
+                                (take 3 (drop c (nth x (inc r))))
+                                (take 3 (drop c (nth x (+ 2 r)))))))
+         (map #(apply concat %))
+         (map str/join)
+         (filter #(re-matches #"[MS].[MS].A.[MS].[MS]" %))
+         (filter #(and (not= (nth % 0) (nth % 8))
+                       (not= (nth % 2) (nth % 6)))))))
+
 (defn rotations [x]
   (let [sz (count x)
         rsz (+ (* 2 sz) 1)
@@ -46,4 +60,11 @@
          flatten
          (map wordcount)
          (reduce +)
+         println)
+    (->> (str/split-lines raw)
+         (map char-array)
+         (map chars)
+         (map seq)
+         xmasrng
+         count
          println)))

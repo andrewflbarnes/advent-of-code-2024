@@ -4,7 +4,8 @@
    [d02]
    [d03]
    [d04]
-   [d05]))
+   [d05]
+   [d06]))
 
 (defn fname [day suff]
   (let [fsuff (cond (nil? suff) "" :else (str "-" suff))
@@ -20,6 +21,7 @@
                   "3" d03/d03
                   "4" d04/d04
                   "5" d05/d05
+                  "6" d06/d06
                   nil)]
     (cond (nil? dayfunc)
           (missing day)

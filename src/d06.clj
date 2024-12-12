@@ -4,8 +4,8 @@
 (defn in-bounds [grid [x y]]
   (and (>= x 0)
        (>= y 0)
-       (< x (count grid))
-       (< y (count (first grid)))))
+       (< y (count grid))
+       (< x (count (first grid)))))
 
 (defn rot [dir]
   (case dir
@@ -14,18 +14,16 @@
     :south :west
     :west :north))
 
-(defn next-step [pos dir]
-  (let [x (pos 0)
-        y (pos 1)]
-    (case dir
-      :north [(dec x) y]
-      :east [x (inc y)]
-      :south [(inc x) y]
-      :west [x (dec y)])))
+(defn next-step [[x y] dir]
+  (case dir
+    :north [x (dec y)]
+    :east [(inc x) y]
+    :south [x (inc y)]
+    :west [(dec x) y]))
 
 (defn is-obstacle [grid [x y]]
   (if (in-bounds grid [x y])
-    (= (get-in grid [x y]) \#)
+    (= (get-in grid [y x]) \#)
     false))
 
 (defn d06 [file]
@@ -34,21 +32,22 @@
         start (->> (map #(str/index-of % "^") grid)
                    (map-indexed vector)
                    (filter #(some? (second %)))
-                   first)
-        pos (atom start)
-        dir (atom :north)
-        pts (atom #{})]
-    (while (in-bounds grid @pos)
-      (let [next (next-step @pos @dir)]
-        (if (is-obstacle grid next)
-          (swap! dir #(rot %))
-          (do
-            (swap! pts conj @pos)
-            (swap! pos (fn [v]
-                         (as-> v v
-                           (assoc v 0 (next 0))
-                           (assoc v 1 (next 1)))))))))
-    (println (count @pts))))
+                   first
+                   (apply #(vector %2 %1)))]
+    (let [pos (atom start)
+          dir (atom :north)
+          pts (atom #{})]
+      (while (in-bounds grid @pos)
+        (let [next (next-step @pos @dir)]
+          (if (is-obstacle grid next)
+            (swap! dir #(rot %))
+            (do
+              (swap! pts conj @pos)
+              (swap! pos (fn [v]
+                           (as-> v v
+                             (assoc v 0 (next 0))
+                             (assoc v 1 (next 1)))))))))
+      (println (count @pts)))))
 
 ; part 2 pseudo description because tired - implement tomorrow
 
